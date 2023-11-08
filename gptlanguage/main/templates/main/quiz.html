@@ -1,0 +1,117 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Quiz Mode
+{% endblock %}
+
+{% block content %}
+    <h1>Questions:</h1>
+        <div id="answer-options" style="padding-left: 30px;">
+            {% for question in questions %}
+            <table>
+                <tr>
+                    <td>{{ question.id }} {{ question.question }}</td>
+                </tr>
+                <tr>
+                    <td><input type="radio" id="btn-1" class="rb" name="{{ question.id }}" value="1"> {{ question.option1 }} </td>
+                </tr>
+                <tr>
+                    <td><input type="radio" id="btn-2" class="rb" name="{{ question.id }}" value="2"> {{ question.option2 }} </td>
+                </tr>
+                <tr>
+                    <td><input type="radio" id="btn-3" class="rb" name="{{ question.id }}" value="3"> {{ question.option3 }} </td>
+                </tr>
+                <tr>
+                    <td><input type="radio" id="btn-4" class="rb" name="{{ question.id }}" value="4"> {{ question.option4 }} </td>
+                </tr>
+                <tr>
+                    <td><label id="corans-{{ question.id }}" class="rb" style="display: none; color: green;"><b>The correct answer is choice #{{ question.correct_option }}</b></label></td>
+                </tr>
+                <hr/>
+            </table>
+            {% endfor %}
+            <br/>
+            <!--<input type="submit" value="Submit your quiz" id="but1" onclick="getAnswers();"/>-->
+            <button id="but1" class="btn btn-primary btn-lg" onclick="getAnswers(); ">Submit your quiz</button>
+            <b id="UserAnswers"></b>
+            <hr/>
+
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        
+        <script>
+            var $j = jQuery.noConflict();
+            //show the correct answer for ALL questions
+            $j(document).ready(function() {
+                $("#but1").click(function() {
+                    $(".rb").show();
+                    $(".rb").attr("disabled", true);
+                });
+            });
+
+            function getAnswers() {
+                // Collect all radio buttons
+                var radioButtons = document.getElementsByClassName('rb');
+                var userAnswers = {};
+                var correctAnswers = {};
+                var totalCorrectAnswers = 0;
+                var totalIncorrectAnswers = 0;
+        
+                // Loop through each question
+                {% for question in questions %}
+                    userAnswers["{{ question.id }}"] = -1; // Initialize user's answer for this question
+                    correctAnswers["{{ question.id }}"] = {{ question.correct_option }}; // Store the correct answer for this question
+                {% endfor %}
+        
+                // Loop through all radio buttons to find the selected answers
+                for (var i = 0; i < radioButtons.length; i++) {
+                    if (radioButtons[i].checked) {
+                        var questionId = radioButtons[i].name;
+                        var selectedValue = radioButtons[i].value;
+                        userAnswers[questionId] = parseInt(selectedValue); // Store the user's selected answer
+                    }
+                }
+        
+                // Compare user's answers with correct answers and calculate the score
+                var score = 0;
+                for (var questionId in userAnswers) {
+                    if (userAnswers[questionId] === correctAnswers[questionId]) {
+                        totalCorrectAnswers++;
+                        score++;
+                        // Display the correct answer
+                        document.getElementById('corans-' + questionId).style.display = 'block';
+                    } else {
+                        // Hide any previously displayed correct answers
+                        totalIncorrectAnswers++;
+                        document.getElementById('corans-' + questionId).style.display = 'none';
+                    }
+                }
+
+                // Display the user's score on the same page
+                var totalQuestions = Object.keys(correctAnswers).length;
+                var gradePercentage = ((score/totalQuestions) * 100).toFixed(2);
+                var resultMessage = "Your score: " + score + " out of " + totalQuestions + " (" + gradePercentage + "%)";
+                document.getElementById('UserAnswers').textContent = resultMessage;
+                
+                $j.ajax({
+                    url: '/update_quiz_results/',  // Modify the URL to match your view
+                    type: 'POST',
+                    data: {
+                        totalQuestions: totalQuestions,
+                        totalCorrectAnswers: totalCorrectAnswers,
+                        totalIncorrectAnswers: totalIncorrectAnswers,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (data) {
+                        // Handle success if needed
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        // Handle error if needed
+                    }
+                });
+                
+            }
+        </script>
+    
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Stats for {{ user.username }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h1 class="card-title">{{ user.username | capfirst }}'s All Time Results</h1>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Total Questions</th>
+              <th>Correct Answers</th>
+              <th>Incorrect Answers</th>
+              <th>Score Percentage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for quiz_result in quiz_results %}
+              <tr>
+                <td>{{ quiz_result.total_questions }}</td>
+                <td>{{ quiz_result.correct_answers }}</td>
+                <td>{{ quiz_result.incorrect_answers }}</td>
+                <td>{{ quiz_result.score_percentage }}%</td>
+              </tr>
+              <tr>
+                <td colspan="4"><hr></td> <!-- Add a separator row -->
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <canvas id="scoreChart" width="400" height="200"></canvas>
+
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // JavaScript code to create the bar chart using Chart.js
+  var ctx = document.getElementById('scoreChart').getContext('2d');
+  var scoreData = {
+    labels: [{% for quiz_result in quiz_results %}"{{ quiz_result.score_percentage }}%", {% endfor %}],
+    datasets: [{
+      label: 'Score Percentage',
+      data: [{% for quiz_result in quiz_results %}{{ quiz_result.score_percentage }}, {% endfor %}],
+      backgroundColor: 'rgba(75, 192, 192, 0.2)', // Customize the bar chart appearance
+      borderColor: 'rgba(75, 192, 192, 1)', // Customize the bar chart appearance
+      borderWidth: 1 // Customize the bar chart appearance
+    }]
+  };
+
+  var scoreChart = new Chart(ctx, {
+    type: 'bar',
+    data: scoreData,
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100 // Customize the y-axis scale
+        }
+      }
+    }
+  });
+</script>
+
+
+
+{% endblock %}

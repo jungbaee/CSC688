@@ -1,0 +1,63 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Questions
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-3">ChatGPT Generated {{ user_input }} Question:</h1>
+    <h2 class="mt-3">{{ question }}</h2>
+
+    <div id="answer-options" class="mt-4">
+        <div class="btn-group-vertical">
+            <button id="btn-1" value="1" class="btn btn-primary btn-lg answer-button">{{ answer1 }}</button>
+            <button id="btn-2" value="2" class="btn btn-primary btn-lg answer-button">{{ answer2 }}</button>
+            <button id="btn-3" value="3" class="btn btn-primary btn-lg answer-button">{{ answer3 }}</button>
+            <button id="btn-4" value="4" class="btn btn-primary btn-lg answer-button">{{ answer4 }}</button>
+        </div>
+    </div>
+
+    <button id="next-question" class="btn btn-primary btn-lg mt-3">Next Question</button>
+</div>
+
+<script>
+    // Reload page to show the next question
+    const btn_answer = document.getElementById('next-question');
+    btn_answer.addEventListener('click', function onClick() {
+        btn_answer.style.backgroundColor = 'salmon';
+        btn_answer.style.color = 'white';
+        location.reload();
+    });
+
+    const btn_1 = document.getElementById('btn-1');
+    const btn_2 = document.getElementById('btn-2');
+    const btn_3 = document.getElementById('btn-3');
+    const btn_4 = document.getElementById('btn-4');
+
+    // Add a click event listener to the form
+    var answer_given = false;
+    document.getElementById('answer-options').addEventListener('click', function(event) {
+        // Get the clicked button
+        const button = event.target;
+        // Check if the clicked element is a button with the class "answer-button"
+        if (button.tagName === 'BUTTON' && button.classList.contains('answer-button')) {
+            // Get the value of the clicked button
+            const answer = button.value;
+            if (answer_given == false) {
+                // Check if the answer is correct
+                if (answer == {{ correct_answer }}) {
+                    // If the answer is correct, fill the button green
+                    button.style.backgroundColor = 'green';
+                    answer_given = true;
+                } else {
+                    // If the answer is incorrect, fill the button red
+                    button.style.backgroundColor = 'red';
+                    $("button[value={{ correct_answer }}]").css("background-color", "green");
+                    answer_given = true;
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

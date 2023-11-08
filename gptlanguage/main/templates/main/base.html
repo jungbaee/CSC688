@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>{% block title %}{% endblock %}</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <style>
+        /* Additional custom styles */
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+    {% block styles %}
+    {% endblock %}
+</head>
+<body style="padding-top: 20px;">
+    {% block navbar %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="/home">Home</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/question">ChatGPTQuestions</a>
+                    </li>
+                    {% if request.user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/showallquestions">Show All Questions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/addquestion">Add Questions</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/quiz">Start Quiz</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/stat">View Statistics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href={% url 'logout' %}>Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href={% url 'register' %}>Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href={% url 'home' %}>Login</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    {% endblock %}
+
+    <div class="container mt-4">
+        {% if messages %}
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    {% for message in messages %}
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% block content %}
+
+        {% endblock %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    {% block footnotes %}
+    
+    <footer>
+        <hr>
+        <p style="text-align: center; font-style: italic;">&copy; QuizQuest. All Rights Reserved.</p>
+    </footer>
+
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,30 @@
+{% extends "main/base.html" %}
+
+{% block title %}
+Show Questions
+{% endblock %}
+
+{% block content %} 
+<div class="container mt-5">
+    <div class="col-md-8 offset-md-2">
+        <h1 class="text-center">Showing all Questions</h1>
+        <hr>
+
+        {% for question in questions %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Question #{{ forloop.counter }}</h5>
+                <p class="card-text"><strong>Question Prompt:</strong> {{ question.question_prompt }}</p>
+                <p class="card-text"><strong>Question:</strong> {{ question.question }}</p>
+                <p class="card-text"><strong>Option 1:</strong> {{ question.option1 }}</p>
+                <p class="card-text"><strong>Option 2:</strong> {{ question.option2 }}</p>
+                <p class="card-text"><strong>Option 3:</strong> {{ question.option3 }}</p>
+                <p class="card-text"><strong>Option 4:</strong> {{ question.option4 }}</p>
+                <p class="card-text"><strong>Correct Answer:</strong> {{ question.correct_option }}</p>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+{% endblock %}

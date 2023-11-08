@@ -1,0 +1,58 @@
+{% extends 'main/base.html' %}
+
+<title>{% block title %}Home{% endblock %}</title>
+
+{% block content %}
+
+  {% if user.is_authenticated %}
+  <div class="text-center">
+    <blockquote class="blockquote">
+      <p class="mb-0">"Education is the most powerful weapon which you can use to change the world." - Nelson Mandela</p>
+    </blockquote>
+  </div>
+  <h1>Welcome!</h1>
+    <form method="post">
+      {% csrf_token %}
+      <label for="language">Select a prompt:</label>
+      <select class="form-select" name="language_selection" id="language_selection">
+        <option selected>Select</option>
+        <option value="Business">Business</option>
+        <option value="German">German</option> 
+        <option value="Geography">Geography</option>
+        <option value="History">History</option>
+        <option value="Science">Science</option>
+        <option value="한국어">한국어</option>
+        <option value="Literature">Literature</option>
+        <option value="Amazon Web Services">AWS</option>
+        <option value="Trival Questions">Trivial Questions</option>
+      </select>
+      <br>
+      <button name="save" type="submit" id="language_selection" class="btn btn-primary">Submit</button>
+    </form>
+  {% else %}  
+    <div class="col-md-6 offset-md-3">
+      <h1>Login</h1>
+
+      <form method="POST" action="{% url 'home' %}">
+        {% csrf_token %}
+        <div class="form-group row">
+          <div class="col-sm-10">
+            <input type="text" class="form-control" name="username" placeholder="User Name" required>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-10">
+            <input type="password" class="form-control" name="password" placeholder="Password" required>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-10">
+            <button type="submit" class="btn btn-primary">Login</button>
+          </div>
+        </div>
+      </form>
+      <br/>
+    </div>
+  {% endif %}
+
+{% endblock %}
